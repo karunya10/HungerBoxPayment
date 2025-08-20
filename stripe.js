@@ -102,7 +102,7 @@ export async function payWithSavedCard(req, res) {
 
     const pi = await stripe.paymentIntents.create({
       amount,
-      currency: "inr",
+      currency: "eur",
       customer: customerId,
       payment_method: paymentMethodId,
       off_session: true,
