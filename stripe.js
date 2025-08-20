@@ -1,13 +1,18 @@
-
 import Stripe from "stripe";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+function getStripeInstance() {
+  console.log("Stripe key is:", process.env.STRIPE_SECRET_KEY);
+  return new Stripe(process.env.STRIPE_SECRET_KEY);
+}
 
 export async function createSetupIntent(req, res) {
+  const stripe = getStripeInstance();
   const { email, firebaseDbUrl, uid } = req.body;
 
   try {
@@ -54,6 +59,7 @@ export async function createSetupIntent(req, res) {
 
 export async function storeCardMetadata(req, res) {
   const { uid, paymentMethodId, firebaseDbUrl } = req.body;
+  const stripe = getStripeInstance();
 
   try {
     const pm = await stripe.paymentMethods.retrieve(paymentMethodId);
@@ -80,7 +86,7 @@ export async function storeCardMetadata(req, res) {
 
 export async function payWithSavedCard(req, res) {
   const { customerId, paymentMethodId, amount } = req.body;
-  console.g("🚀 ~ payWithSavedCard ~ req.body:", req.body);
+  const stripe = getStripeInstance();
 
   try {
     // Attach payment method to customer only if not already attached to any customer
@@ -114,6 +120,7 @@ export async function payWithSavedCard(req, res) {
 
 export async function deleteCard(req, res) {
   const { uid, paymentMethodId, firebaseDbUrl } = req.body;
+  const stripe = getStripeInstance();
   try {
     // Detach card from Stripe customer
     await stripe.paymentMethods.detach(paymentMethodId);
