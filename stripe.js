@@ -99,13 +99,10 @@ export async function payWithSavedCard(req, res) {
       // Payment method is attached to a different customer, throw error
       throw new Error("Payment method is attached to a different customer.");
     }
-    // Optionally, set as default payment method for invoices (not required for one-off payments)
-    // await stripe.customers.update(customerId, {
-    //   invoice_settings: { default_payment_method: paymentMethodId },
-    // });
+
     const pi = await stripe.paymentIntents.create({
       amount,
-      currency: "eur",
+      currency: "inr",
       customer: customerId,
       payment_method: paymentMethodId,
       off_session: true,
